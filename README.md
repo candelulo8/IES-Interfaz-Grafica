@@ -1,7 +1,5 @@
 # IES-Interfaz-Grafica
 
-# IES - Interfaz Grafica
-
 # SISTEMA DE AUTOGESTIÓN ESTUDIANTIL 
 
 # Objetivo
