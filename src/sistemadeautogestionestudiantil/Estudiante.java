@@ -43,6 +43,15 @@ public class Estudiante extends PersonaAcademica implements Consultable {
       }
        return null;
     }
+    
+    /////Buscar por cuatrimestre
+    public ArrayList<InscripcionMateria> getInscripcion(int cuatrimestre) {
+    ArrayList<InscripcionMateria> resultado = new ArrayList<>();
+    for (InscripcionMateria i : materias) {
+        if (i.getMateria().getCuatrimestre() == cuatrimestre) resultado.add(i);
+    }
+    return resultado;
+}
 
      //promedio
      public double getPromedioGeneral(){
@@ -69,6 +78,20 @@ public class Estudiante extends PersonaAcademica implements Consultable {
         }
         return suma / cont;
     }
+     
+     
+      public ArrayList<InscripcionMateria> getMaterias() { 
+        return materias;
+    }
+      
+      public ArrayList<InscripcionMateria> buscarPorNombre(String fragmento) {
+    ArrayList<InscripcionMateria> resultado = new ArrayList<>();
+    for (InscripcionMateria i : materias) {
+        if (i.getMateria().getNombre().toLowerCase()
+                .contains(fragmento.toLowerCase())) resultado.add(i);
+    }
+    return resultado;
+}
 
      
     // Materias en riesgo (75% a 85%)
