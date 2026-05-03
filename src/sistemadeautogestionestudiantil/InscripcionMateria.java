@@ -29,7 +29,7 @@ public class InscripcionMateria implements Evaluable{
         return materia;
     }
     
-    double getPorcentajeAsistencia(){
+    public double getPorcentajeAsistencia(){
         if (totalClases == 0) return 0;
         return (double)clasesAsistidas*100/totalClases;
     }
@@ -41,7 +41,7 @@ public class InscripcionMateria implements Evaluable{
         if (porcentaje >= 75) {
             condicion = "Regular";
         } else {
-           condicion = "Libre";
+           condicion = "Libre por inasistencias";
         }
         return condicion;
     }
@@ -58,14 +58,14 @@ public class InscripcionMateria implements Evaluable{
         return acumulador/notas.size();
     }
     
-    void registrarAsistencia(boolean presente){
+    public void registrarAsistencia(boolean presente){
         totalClases++;
         if (presente) {
             clasesAsistidas++;
         }
     }
     
-    void agregarNota(double nota){
+    public void agregarNota(double nota){
         if (nota >=0 && nota<=10) {
             notas.add(nota);
         } else{

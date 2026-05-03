@@ -2,7 +2,7 @@ package sistemadeautogestionestudiantil;
 
 import java.util.HashSet;
 
-public class Materia {
+public class Materia implements Consultable {
     private String nombre;
     private String codigo;
     private int cuatrimestre;
@@ -10,8 +10,8 @@ public class Materia {
     
     Materia(String materia, String codigo, int cuatrimestre, int anio){
         this.nombre = materia;
-        this.codigo = codigo;
-        this.cuatrimestre = cuatrimestre;
+        setCodigo(codigo);
+        setCuatrimestre(cuatrimestre);
         this.anio = anio;
     }
     
@@ -27,7 +27,7 @@ public class Materia {
             this.codigo = codigo;
             codigos.add(codigo);
         }else{
-            System.out.println("El código ya existe");
+            System.out.println("ERROR: El código ya existe");
         }
     }
     
@@ -37,5 +37,14 @@ public class Materia {
         } else {
             this.cuatrimestre = cuatrimestre; //guarda el valor que recibió el setter en el atributo del objeto.
         }
+    }
+
+    @Override
+    public void mostrarResumen() {
+        System.out.println("=== MATERIA ===");
+        System.out.println("Nombre: " + nombre);
+        System.out.println("Código: " + codigo);
+        System.out.println("Cuatrimestre: " + cuatrimestre);
+        System.out.println("Año: " + anio);
     }
 }
