@@ -204,4 +204,33 @@ public class SistemaDeAutogestionEstudiantil {
             i.getPorcentajeAsistencia(),
             i.getPromedio());
        }
+    
+    static void menuCalificaciones() {
+        if (alumno.getMaterias().isEmpty()) { System.out.println("   No tenés materias inscriptas."); return; }
+        listarMaterias();
+        System.out.print("\nCódigo de la materia: ");
+        String codigo = sc.nextLine().trim();
+        InscripcionMateria insc = alumno.getInscripcion(codigo);
+        if (insc == null) { System.out.println("   Materia no encontrada."); return; }
+
+        // Mostrar notas actuales
+        ArrayList<Double> notas = insc.getNotas();
+        if (!notas.isEmpty()) {
+            System.out.print("   Notas actuales: ");
+            for (int i = 0; i < notas.size(); i++) {
+                System.out.printf("%.1f%s", notas.get(i), i < notas.size() - 1 ? ", " : "\n");
+            }
+            System.out.printf("   Promedio actual: %.2f%n", insc.getPromedio());
+        }
+
+        System.out.print("Nueva nota (0-10): ");
+        double nota = sc.nextDouble();
+        insc.agregarNota(nota);
+
+        // Mostrar promedio actualizado
+        if (!insc.getNotas().isEmpty()) {
+            System.out.printf("   Promedio actualizado: %.2f%n", insc.getPromedio());
+        }
+    }
+    
     }

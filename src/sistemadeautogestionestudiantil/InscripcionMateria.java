@@ -72,6 +72,9 @@ public class InscripcionMateria implements Evaluable{
             System.out.println("La nota debe estar entre 0 y 10");
         }
     }
+    public ArrayList<Double> getNotas() {
+    return notas;
+    }
     
     @Override
     public boolean estaAprobada(){
