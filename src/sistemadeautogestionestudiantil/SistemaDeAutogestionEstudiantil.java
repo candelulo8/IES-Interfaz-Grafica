@@ -25,18 +25,14 @@ public class SistemaDeAutogestionEstudiantil {
         int anioIngreso = 0;
         boolean valido = false;
         while (!valido) {
-            try {
-                anioIngreso = sc.nextInt();
-                if (anioIngreso > 2026) {
-                System.out.println("Error: el año no puede ser mayor a 2026.");
-                System.out.print("Ingresá el año de ingreso: ");
-                } else {
-                    valido = true;
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Error: ingresá solo números.");
-                sc.nextLine();
-                System.out.print("Ingresá el año de ingreso: ");
+            int input = leerOpcion(sc);
+            if (input == -1) {
+                System.out.print("Error: ingresá solo números: ");
+            } else if (input > 2026) {
+                System.out.print("Error: el año no puede ser mayor a 2026: ");
+            } else {
+                anioIngreso = input;
+                valido = true;
             }
         }
          alumno = new Estudiante(carrera, legajo, nombre, anioIngreso);
@@ -59,7 +55,6 @@ public class SistemaDeAutogestionEstudiantil {
             System.out.println("└───────────────────────────────────────┘");
             System.out.print("Opción: ");
             opcion = leerOpcion(sc);
-            sc.nextLine(); //limpiamos el buffer sino se queda con con el in anterioir
 
             switch (opcion) {
                 case 1 -> verPerfil();
@@ -130,32 +125,37 @@ public class SistemaDeAutogestionEstudiantil {
     }
     
     public static void registrarAsistencia(){
-        System.out.println("Ingrese el codigo de la materia: ");
-        String codigoMateria = sc.nextLine();
-        
+        System.out.print("Ingrese el codigo de la materia: ");
+        String codigoMateria = sc.nextLine().trim().toUpperCase();
+
         InscripcionMateria inscripcion = alumno.getInscripcion(codigoMateria);
         while (inscripcion == null) {
             System.out.println("Error: no encontramos ese codigo: "+codigoMateria);
-            System.out.println("Ingrese nuevamente el codigo de la materia");
-            codigoMateria = sc.nextLine();
+            System.out.print("Ingrese nuevamente el codigo de la materia: ");
+            codigoMateria = sc.nextLine().trim().toUpperCase();
             inscripcion = alumno.getInscripcion(codigoMateria);
         }
-        System.out.println("Estuvo presente?");
-        String respuesta =sc.nextLine();
+        System.out.print("Estuvo presente? (Si/No/0 para volver): ");
+        String respuesta = sc.nextLine();
+        while (!respuesta.equalsIgnoreCase("Si") && !respuesta.equalsIgnoreCase("No") && !respuesta.equals("0")) {
+            System.out.print("Error: ingresá Si, No o 0 para volver: ");
+            respuesta = sc.nextLine();
+        }
+        if (respuesta.equals("0")) return;
+
         if (respuesta.equalsIgnoreCase("Si")) {
             inscripcion.registrarAsistencia(true);
         } else {
             inscripcion.registrarAsistencia(false);
         }
-        //imprimir porcentaje actualizado:
+
         double porcentajeActual = inscripcion.getPorcentajeAsistencia(); 
         System.out.println("Tu porcentaje de asistencias actualizado: "+porcentajeActual);
         String condicion = inscripcion.getCondicion();
-        //Advertencias
         if (porcentajeActual>=75 && porcentajeActual<=80) {
-        System.out.println("Su condicion es: "+condicion +"\nSe encuentra en una zona de riesgo por inasistencias, no falte más :)");
+            System.out.println("Su condicion es: "+condicion +"\nSe encuentra en una zona de riesgo por inasistencias, no falte más :)");
         } else if(porcentajeActual<75){
-        System.out.println("Se encuentra en perdida de regularidad por ende su condición es "+ condicion);
+            System.out.println("Se encuentra en perdida de regularidad por ende su condición es "+ condicion);
         }
     }
     
@@ -173,7 +173,7 @@ public class SistemaDeAutogestionEstudiantil {
         for(InscripcionMateria i : lista){
             System.out.printf(" %-6s %-20s | Cond: %-25s | Asist: %.1f%%  | Prom: %.2f%n", 
                 i.getMateria().getCodigo(),
-                i.getMateria().getCodigo(),
+                i.getMateria().getNombre(),
                 i.getCondicion(),
                 i.getPorcentajeAsistencia(),
                 i.getPromedio());
@@ -257,7 +257,7 @@ public class SistemaDeAutogestionEstudiantil {
         int opcion;
         do {
             System.out.println("\n┌─────────────────────────────────────────┐");
-            System.out.println("  │       GESTIÓN DE MATERIAS          │");
+            System.out.println("  │           MENU DE REPORTES          │");
             System.out.println("  ├──────────────────────────────────────────┤");
             System.out.println("  │  1. Reporte de situacion general   │");
             System.out.println("  │  2. Reporte de materias en riesgo  │");
@@ -268,80 +268,91 @@ public class SistemaDeAutogestionEstudiantil {
             opcion = leerOpcion(sc);
 
             switch (opcion) {
-                case 1 -> 
-                { //Reporte de situacion general
+                case 1 -> {
                     int contRegular = 0;
                     int contLibre = 0;
-                    
                     List<InscripcionMateria> lista = alumno.getMaterias();
-                    System.out.println("------------- Reporte general -----------");
-                    for (InscripcionMateria inscripcion : lista) {  
-                        System.out.println("Materia: "+ inscripcion.getMateria().getNombre());
-                        System.out.println("Condicion: " + inscripcion.getCondicion());
-                        System.out.println("% de Asistencia: "+ inscripcion.getPorcentajeAsistencia());
-                        System.out.println("% de Asistencia: "+ inscripcion.getPromedio());
-                        
+
+                    System.out.println("\n╔══════════════════════════════════════════════╗");
+                    System.out.println("║         REPORTE DE SITUACION GENERAL        ║");
+                    System.out.println("╚══════════════════════════════════════════════╝");
+
+                    for (InscripcionMateria inscripcion : lista) {
+                        String estado;
                         if (inscripcion.estaAprobada()) {
-                             System.out.println("Estado: Aprobada");
-                        } else if(inscripcion.getCondicion().equals("Regular")){
-                            System.out.println("Estado: Regular");
-                            contRegular ++;
+                            estado = "Aprobada";
+                        } else if (inscripcion.getCondicion().equals("Regular")) {
+                            estado = "En curso";
+                            contRegular++;
                         } else {
-                            System.out.println("Estado: Libre");
-                            contLibre ++;
+                            estado = "Libre";
+                            contLibre++;
                         }
+                        System.out.println("┌──────────────────────────────────────────────┐");
+                        System.out.printf("│ Materia   : %-32s│%n", inscripcion.getMateria().getNombre());
+                        System.out.printf("│ Condicion : %-32s│%n", inscripcion.getCondicion());
+                        System.out.printf("│ Asistencia: %-31.1f%%│%n", inscripcion.getPorcentajeAsistencia());
+                        System.out.printf("│ Promedio  : %-32.2f│%n", inscripcion.getPromedio());
+                        System.out.printf("│ Estado    : %-32s│%n", estado);
+                        System.out.println("└──────────────────────────────────────────────┘");
                     }
-                    System.out.println("--------------------------------");
-                    System.out.println("Promedio general: "+alumno.getPromedioGeneral());
-                    System.out.println("Materias regulares: "+contRegular);
-                    System.out.println("Materias en riesgo: "+ alumno.getMateriasCriticas().size());
-                    System.out.println("Materias libres: "+contLibre);
-                    System.out.println("--------------------------------");
+
+                    System.out.println("╔══════════════════════════════════════════════╗");
+                    System.out.printf("║ Promedio general  : %-24.2f║%n", alumno.getPromedioGeneral());
+                    System.out.printf("║ Materias regulares: %-24d║%n", contRegular);
+                    System.out.printf("║ Materias en riesgo: %-24d║%n", alumno.getMateriasCriticas().size());
+                    System.out.printf("║ Materias libres   : %-24d║%n", contLibre);
+                    System.out.println("╚══════════════════════════════════════════════╝");
                 }
                 
                 case 2 -> {
-                    //Reporte de materias en riesgo: Listar sólo materias con asistencia entre 75% y 85% ordenadas por asistencia ascendente
-                    System.out.println("-------------------------------------------------------");
-                    System.out.println("           ⚠  Reporte de materias en riesgo  ⚠       ");
-                    System.out.println("-------------------------------------------------------");
+                    System.out.println("\n╔══════════════════════════════════════════════╗");
+                    System.out.println("║    ⚠  REPORTE DE MATERIAS EN RIESGO  ⚠     ║");
+                    System.out.println("╚══════════════════════════════════════════════╝");
+
                     ArrayList<InscripcionMateria> enRiesgo = alumno.getMateriasCriticas();
-                    Collections.sort(enRiesgo, (a, b) -> 
-                    Double.compare(a.getPorcentajeAsistencia(), b.getPorcentajeAsistencia()));
-                    for (InscripcionMateria materia : enRiesgo) {
-                        System.out.println("Materia en riesgo: "+materia.getMateria().getNombre()+" %"+materia.getPorcentajeAsistencia());
+                    Collections.sort(enRiesgo, (a, b) ->
+                        Double.compare(a.getPorcentajeAsistencia(), b.getPorcentajeAsistencia()));
+
+                    if (enRiesgo.isEmpty()) {
+                        System.out.println("  No hay materias en riesgo.");
+                    } else {
+                        for (InscripcionMateria materia : enRiesgo) {
+                            System.out.println("┌──────────────────────────────────────────────┐");
+                            System.out.printf("│ Materia    : %-31s│%n", materia.getMateria().getNombre());
+                            System.out.printf("│ Asistencia : %-30.1f%%│%n", materia.getPorcentajeAsistencia());
+                            System.out.println("└──────────────────────────────────────────────┘");
+                        }
                     }
                 }
                 case 3 -> {
-                    //Reporte de materias logradas: Listar materias con promedio >= 6 y condición Regular y mostrar nota máxima, mínima y promedio del conjunto
-                    System.out.println("-------------------------------------------------------");
-                    System.out.println("         💪 Reporte de materias logradas 💪             ");
-                    System.out.println("-------------------------------------------------------");
+                            System.out.println("\n╔══════════════════════════════════════════════╗");
+                            System.out.println("║      💪 REPORTE DE MATERIAS LOGRADAS 💪     ║");
+                            System.out.println("╚══════════════════════════════════════════════╝");
 
-                    ArrayList<Double> todasLasNotas = new ArrayList<>();
+                            ArrayList<Double> todasLasNotas = new ArrayList<>();
+                            for (InscripcionMateria inscripcion : alumno.getMaterias()) {
+                                if (inscripcion.estaAprobada()) {
+                                    System.out.println("┌──────────────────────────────────────────────┐");
+                                    System.out.printf("│ Materia  : %-33s│%n", inscripcion.getMateria().getNombre());
+                                    System.out.printf("│ Promedio : %-33.2f│%n", inscripcion.getPromedio());
+                                    System.out.println("└──────────────────────────────────────────────┘");
+                                    todasLasNotas.addAll(inscripcion.getNotas());
+                                }
+                            }
 
-                    for (InscripcionMateria inscripcion : alumno.getMaterias()) {
-                        if (inscripcion.estaAprobada()) {
-                            System.out.println("Materia: " + inscripcion.getMateria().getNombre() 
-                                + " | Promedio: " + inscripcion.getPromedio());
-                            todasLasNotas.addAll(inscripcion.getNotas());
-                        }
-                    }
+                            if (!todasLasNotas.isEmpty()) {
+                                double suma = 0;
+                                for (double nota : todasLasNotas) { suma += nota; }
+                                System.out.println("╔══════════════════════════════════════════════╗");
+                                System.out.printf("║ Nota maxima          : %-19.1f║%n", Collections.max(todasLasNotas));
+                                System.out.printf("║ Nota minima          : %-19.1f║%n", Collections.min(todasLasNotas));
+                                System.out.printf("║ Promedio del conjunto: %-19.2f║%n", suma / todasLasNotas.size());
+                                System.out.println("╚══════════════════════════════════════════════╝");
+                            } else {
+                                System.out.println("  No hay materias aprobadas.");
+                            }
 
-                    if (!todasLasNotas.isEmpty()) {
-                        System.out.println("--------------------------------");
-                        System.out.println("Nota máxima: " + Collections.max(todasLasNotas));
-                        System.out.println("Nota mínima: " + Collections.min(todasLasNotas));
-                        
-                        //promedio de todas las materias aprobadas
-                        double suma = 0;
-                        for (double nota : todasLasNotas) {
-                            suma += nota;
-                        }
-                        double promedio = suma / todasLasNotas.size();
-                        System.out.println("Promedio del conjunto: " + promedio);
-                    } else {
-                        System.out.println("No hay materias aprobadas.");
-                    }
                     
                 }
                 case 0 -> {}
