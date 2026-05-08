@@ -19,24 +19,31 @@ Este proyecto aplica en forma integrada todos los temas del primer bloque de la 
 
 - Candela López
 - Guada Molina
-- Jimena
+- Gimena Romero
 
 ## 📂 Estructura
-
 /src
  ├── PersonaAcademica.java
  ├── Estudiante.java
  ├── Materia.java
  ├── InscripcionMateria.java
+ ├── Evaluable.java
+ ├── Consultable.java
+ └── SistemaDeAutogestionEstudiantil.java
 
 
-## 🤖 Uso de IA
-Se utilizó IA como apoyo para:
-- Resolución de errores
-- Optimización de código
+## 🤖 Documentación: Uso de IA y video
 
-Links a conversaciones de Cande:
+Links a conversaciones de Candela:
 - [https://chat.openai.com/yyyy](https://chatgpt.com/share/69f4d80a-b204-83e9-b50a-10b42722ca33)]
 - [https://claude.ai/share/97197b90-684a-41ae-a43d-f6a00381f829]
+- [https://claude.ai/chat/5f681912-f907-4e4f-bc8f-e48810cc88d2]
+- [https://claude.ai/chat/a5964c72-ee03-45a8-b7f2-aa0c3b82bebc]
+- [https://claude.ai/chat/43921838-1610-496b-87d0-b3a1b9c4d383]
+- VIDEO: [https://drive.google.com/file/d/1XfoYzeDP4yHFJ3Shhq4k4tr5WMV1Mkbq/view?usp=sharing]
+
+Documentación de Guadalupe (promps y video):
+- [https://drive.google.com/drive/folders/1Np90drfxH5iQxy-YmBdz2l-0J-v7s9YA ]
+
 
   
